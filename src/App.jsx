@@ -1,9 +1,9 @@
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
-import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
-import { AuthProvider, useAuth } from '@/lib/AuthContext';
+import { AuthProvider } from '@/lib/AuthContext';
 import { LanguageProvider } from './lib/LanguageContext';
 import Layout from './components/Layout';
 import AdminRoute from './components/AdminRoute';
@@ -22,21 +22,7 @@ import AuthCallback from './pages/AuthCallback';
 import AdminReviews from './pages/admin/AdminReviews';
 import AdminGallery from './pages/admin/AdminGallery';
 
-const AppRoutes = () => {
-  const { isLoadingAuth } = useAuth();
-  const location = useLocation();
-
-  const skipAuthSpinner = ['/login', '/auth/callback'].includes(location.pathname);
-
-  if (isLoadingAuth && !skipAuthSpinner) {
-    return (
-      <div className="fixed inset-0 flex items-center justify-center bg-[#050505]">
-        <div className="w-8 h-8 border-4 border-white/20 border-t-[#2F78F5] rounded-full animate-spin" />
-      </div>
-    );
-  }
-
-  return (
+const AppRoutes = () => (
     <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="/auth/callback" element={<AuthCallback />} />
@@ -60,8 +46,7 @@ const AppRoutes = () => {
         <Route path="*" element={<PageNotFound />} />
       </Route>
     </Routes>
-  );
-};
+);
 
 
 function App() {

@@ -2,36 +2,54 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 
+const TIMEOUT_MS = 12000;
+
 export default function AuthCallback() {
   const navigate = useNavigate();
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const finish = async () => {
-      try {
-        // Give Supabase time to exchange the OAuth code in the URL
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    let done = false;
 
-        if (sessionError) throw sessionError;
-
-        if (!session) {
-          // Retry once after a short delay (PKCE exchange can be async)
-          await new Promise(r => setTimeout(r, 1000));
-          const { data: { session: retrySession }, error: retryError } = await supabase.auth.getSession();
-          if (retryError) throw retryError;
-          if (!retrySession) throw new Error('Accesso non completato. Riprova.');
-        }
-
-        const redirect = sessionStorage.getItem('auth_redirect') || '/recensioni';
-        sessionStorage.removeItem('auth_redirect');
-        navigate(redirect, { replace: true });
-      } catch (err) {
-        console.error('Auth callback error:', err);
-        setError(err.message || 'Errore durante l\'accesso');
-      }
+    const finish = (redirect) => {
+      if (done) return;
+      done = true;
+      sessionStorage.removeItem('auth_redirect');
+      navigate(redirect, { replace: true });
     };
 
-    finish();
+    const fail = (message) => {
+      if (done) return;
+      done = true;
+      sessionStorage.removeItem('auth_redirect');
+      setError(message);
+    };
+
+    const redirect = sessionStorage.getItem('auth_redirect') || '/recensioni';
+
+    const timeout = setTimeout(() => {
+      fail('Accesso non completato. Riprova dal login.');
+    }, TIMEOUT_MS);
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session && (event === 'SIGNED_IN' || event === 'INITIAL_SESSION')) {
+        clearTimeout(timeout);
+        finish(redirect);
+      }
+    });
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        clearTimeout(timeout);
+        finish(redirect);
+      }
+    });
+
+    return () => {
+      done = true;
+      clearTimeout(timeout);
+      subscription.unsubscribe();
+    };
   }, [navigate]);
 
   if (error) {

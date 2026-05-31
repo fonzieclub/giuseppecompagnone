@@ -12,7 +12,7 @@ export default function AdminRoute({ children, fallback = <DefaultFallback /> })
   const { isAuthenticated, isAdmin, isLoadingAuth } = useAuth();
   const location = useLocation();
 
-  if (isLoadingAuth) {
+  if (isLoadingAuth && !isAuthenticated) {
     return fallback;
   }
 

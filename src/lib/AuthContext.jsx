@@ -1,8 +1,16 @@
-import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
+import React, { createContext, useState, useContext, useEffect, useCallback, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
 import { clearLegacyStorage } from '@/lib/clearLegacyStorage';
 
 const AuthContext = createContext();
+
+const withTimeout = (promise, ms, label = 'Operation') =>
+  Promise.race([
+    promise,
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error(`${label} timeout`)), ms)
+    ),
+  ]);
 
 const mapProfileToUser = (authUser, profile) => {
   if (!authUser) return null;
@@ -35,6 +43,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [session, setSession] = useState(null);
   const [isLoadingAuth, setIsLoadingAuth] = useState(true);
+  const profileLoadRef = useRef(0);
 
   const loadUser = useCallback(async (authSession) => {
     if (!authSession?.user) {
@@ -44,15 +53,24 @@ export const AuthProvider = ({ children }) => {
     }
 
     setSession(authSession);
+    setUser(mapProfileToUser(authSession.user, null));
+
+    const loadId = ++profileLoadRef.current;
 
     try {
-      await ensureProfile(authSession.user);
+      await withTimeout(ensureProfile(authSession.user), 5000, 'Profile create');
 
-      const { data: profile, error } = await supabase
-        .from('profiles')
-        .select('full_name, role')
-        .eq('id', authSession.user.id)
-        .maybeSingle();
+      const { data: profile, error } = await withTimeout(
+        supabase
+          .from('profiles')
+          .select('full_name, role')
+          .eq('id', authSession.user.id)
+          .maybeSingle(),
+        5000,
+        'Profile fetch'
+      );
+
+      if (loadId !== profileLoadRef.current) return;
 
       if (error) {
         console.warn('Profile fetch failed:', error.message);
@@ -60,8 +78,8 @@ export const AuthProvider = ({ children }) => {
 
       setUser(mapProfileToUser(authSession.user, profile));
     } catch (err) {
-      console.warn('Profile fetch error:', err);
-      setUser(mapProfileToUser(authSession.user, null));
+      if (loadId !== profileLoadRef.current) return;
+      console.warn('Profile load skipped:', err.message);
     }
   }, []);
 
@@ -75,30 +93,17 @@ export const AuthProvider = ({ children }) => {
     };
 
     const init = async () => {
-      const isAuthCallback = window.location.pathname === '/auth/callback';
-
       try {
-        if (isAuthCallback) {
-          // OAuth callback page handles session exchange — don't timeout here
-          const { data: { session: initialSession } } = await supabase.auth.getSession();
-          if (mounted) await loadUser(initialSession);
-          return;
-        }
-
-        const sessionPromise = supabase.auth.getSession();
-        const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('Auth timeout')), 8000)
+        const { data: { session: initialSession }, error } = await withTimeout(
+          supabase.auth.getSession(),
+          5000,
+          'Auth session'
         );
-
-        const { data: { session: initialSession }, error } = await Promise.race([
-          sessionPromise,
-          timeoutPromise,
-        ]);
 
         if (error) throw error;
 
-        if (mounted) {
-          await loadUser(initialSession);
+        if (mounted && initialSession) {
+          void loadUser(initialSession);
         }
       } catch (err) {
         console.warn('Auth init failed, continuing as guest:', err.message);
@@ -113,10 +118,9 @@ export const AuthProvider = ({ children }) => {
 
     init();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, nextSession) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, nextSession) => {
       if (mounted) {
-        await loadUser(nextSession);
-        finishLoading();
+        void loadUser(nextSession);
       }
     });
 
@@ -164,10 +168,6 @@ export const AuthProvider = ({ children }) => {
       provider: 'google',
       options: {
         redirectTo: `${window.location.origin}/auth/callback`,
-        queryParams: {
-          access_type: 'offline',
-          prompt: 'consent',
-        },
       },
     });
     if (error) throw error;

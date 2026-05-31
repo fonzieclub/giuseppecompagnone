@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
+import { clearLegacyStorage } from '@/lib/clearLegacyStorage';
 
 const AuthContext = createContext();
 
@@ -27,32 +28,67 @@ export const AuthProvider = ({ children }) => {
 
     setSession(authSession);
 
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('full_name, role')
-      .eq('id', authSession.user.id)
-      .maybeSingle();
+    try {
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('full_name, role')
+        .eq('id', authSession.user.id)
+        .maybeSingle();
 
-    setUser(mapProfileToUser(authSession.user, profile));
+      if (error) {
+        console.warn('Profile fetch failed:', error.message);
+      }
+
+      setUser(mapProfileToUser(authSession.user, profile));
+    } catch (err) {
+      console.warn('Profile fetch error:', err);
+      setUser(mapProfileToUser(authSession.user, null));
+    }
   }, []);
 
   useEffect(() => {
+    clearLegacyStorage();
+
     let mounted = true;
 
+    const finishLoading = () => {
+      if (mounted) setIsLoadingAuth(false);
+    };
+
     const init = async () => {
-      const { data: { session: initialSession } } = await supabase.auth.getSession();
-      if (mounted) {
-        await loadUser(initialSession);
-        setIsLoadingAuth(false);
+      try {
+        const sessionPromise = supabase.auth.getSession();
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Auth timeout')), 8000)
+        );
+
+        const { data: { session: initialSession }, error } = await Promise.race([
+          sessionPromise,
+          timeoutPromise,
+        ]);
+
+        if (error) throw error;
+
+        if (mounted) {
+          loadUser(initialSession);
+        }
+      } catch (err) {
+        console.warn('Auth init failed, continuing as guest:', err.message);
+        if (mounted) {
+          setSession(null);
+          setUser(null);
+        }
+      } finally {
+        finishLoading();
       }
     };
 
     init();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, nextSession) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, nextSession) => {
       if (mounted) {
-        await loadUser(nextSession);
-        setIsLoadingAuth(false);
+        loadUser(nextSession);
+        finishLoading();
       }
     });
 

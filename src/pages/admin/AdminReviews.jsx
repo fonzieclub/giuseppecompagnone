@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Star, Check, X, Pencil, Save } from 'lucide-react';
+import { Star, Check, X, Pencil, Save, Trash2 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
 
@@ -110,6 +110,27 @@ export default function AdminReviews() {
     }
 
     toast.success(status === 'approved' ? 'Recensione approvata' : 'Recensione rifiutata');
+    if (editingId === id) cancelEdit();
+    setReviews(prev => prev.filter(r => r.id !== id));
+    loadCounts();
+  };
+
+  const deleteReview = async (id) => {
+    if (!window.confirm('Eliminare definitivamente questa recensione? L\'operazione non può essere annullata.')) {
+      return;
+    }
+
+    const { error } = await supabase
+      .from('reviews')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      toast.error('Errore durante l\'eliminazione');
+      return;
+    }
+
+    toast.success('Recensione eliminata');
     if (editingId === id) cancelEdit();
     setReviews(prev => prev.filter(r => r.id !== id));
     loadCounts();
@@ -272,6 +293,14 @@ export default function AdminReviews() {
                           className={`${actionBtn} bg-red-600/20 border border-red-600/40 text-red-400 hover:bg-red-600/30`}
                         >
                           <X size={14} /> Rifiuta
+                        </button>
+                      )}
+                      {filter === 'rejected' && (
+                        <button
+                          onClick={() => deleteReview(review.id)}
+                          className={`${actionBtn} bg-red-600/20 border border-red-600/40 text-red-400 hover:bg-red-600/30`}
+                        >
+                          <Trash2 size={14} /> Elimina
                         </button>
                       )}
                     </>

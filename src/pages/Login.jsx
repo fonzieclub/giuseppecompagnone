@@ -1,21 +1,35 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
 import { useLang } from '@/lib/LanguageContext';
 import { toast } from 'sonner';
 
+function getInitialMode(searchParams, redirect) {
+  const mode = searchParams.get('mode');
+  if (mode === 'login' || mode === 'signup') return mode;
+  if (redirect.includes('recensioni')) return 'signup';
+  return 'login';
+}
+
 export default function Login() {
   const { t } = useLang();
-  const { signIn, signUp, signInWithGoogle } = useAuth();
+  const { signIn, signUp, signInWithGoogle, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const redirect = searchParams.get('redirect') || '/recensioni';
 
-  const [mode, setMode] = useState('login');
+  const [mode, setMode] = useState(() => getInitialMode(searchParams, redirect));
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [awaitingConfirmation, setAwaitingConfirmation] = useState(false);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate(redirect, { replace: true });
+    }
+  }, [isAuthenticated, navigate, redirect]);
 
   const inputClass =
     'w-full bg-white/5 border border-white/10 rounded-full px-6 py-4 text-[#F2F2F2] text-base sm:text-sm font-body placeholder:text-[#555] focus:border-[#2F78F5] focus:ring-1 focus:ring-[#2F78F5] focus:outline-none transition-all min-h-[48px]';
@@ -33,6 +47,7 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setAwaitingConfirmation(false);
 
     try {
       if (mode === 'signup') {
@@ -41,20 +56,42 @@ export default function Login() {
           setLoading(false);
           return;
         }
-        const { session } = await signUp({ email, password, fullName: fullName.trim() });
-        if (session) {
+        const data = await signUp({ email, password, fullName: fullName.trim() });
+        if (data.session) {
           toast.success(t('Account creato!', 'Account created!'));
-          navigate(redirect);
+          navigate(redirect, { replace: true });
         } else {
-          toast.success(t('Controlla la tua email per confermare l\'account', 'Check your email to confirm your account'));
+          setAwaitingConfirmation(true);
+          setMode('login');
+          toast.success(
+            t(
+              'Account creato! Controlla la tua email e clicca il link di conferma, poi accedi.',
+              'Account created! Check your email, confirm your account, then log in.'
+            ),
+            { duration: 8000 }
+          );
         }
       } else {
         await signIn({ email, password });
         toast.success(t('Accesso effettuato', 'Logged in successfully'));
-        navigate(redirect);
+        navigate(redirect, { replace: true });
       }
     } catch (error) {
-      toast.error(error.message);
+      const msg = error.message || '';
+      if (msg.toLowerCase().includes('email not confirmed')) {
+        toast.error(
+          t(
+            'Devi confermare la tua email prima di accedere. Controlla la posta in arrivo.',
+            'Please confirm your email before logging in. Check your inbox.'
+          ),
+          { duration: 8000 }
+        );
+      } else if (msg.toLowerCase().includes('already registered')) {
+        toast.error(t('Email già registrata. Prova ad accedere.', 'Email already registered. Try logging in.'));
+        setMode('login');
+      } else {
+        toast.error(msg);
+      }
     } finally {
       setLoading(false);
     }
@@ -71,17 +108,26 @@ export default function Login() {
           </h1>
           <p className="mt-3 text-sm text-[#777] font-body">
             {t(
-              'Accedi per lasciare una recensione sulla tua esperienza.',
-              'Sign in to leave a review about your experience.'
+              'Crea un account gratuito per lasciare una recensione.',
+              'Create a free account to leave a review.'
             )}
           </p>
         </div>
+
+        {awaitingConfirmation && (
+          <div className="mb-6 p-4 rounded-2xl bg-[#2F78F5]/10 border border-[#2F78F5]/30 text-sm text-[#ccc] text-center">
+            {t(
+              'Ti abbiamo inviato un\'email di conferma. Clicca il link, poi torna qui e accedi.',
+              'We sent you a confirmation email. Click the link, then come back here and log in.'
+            )}
+          </div>
+        )}
 
         <div className="flex gap-2 mb-8 p-1 bg-white/[0.03] border border-white/10 rounded-full">
           <button
             type="button"
             onClick={() => setMode('login')}
-            className={`flex-1 py-2.5 rounded-full text-xs font-display uppercase tracking-wider transition-all ${
+            className={`flex-1 py-2.5 rounded-full text-xs font-display uppercase tracking-wider transition-all min-h-[44px] ${
               mode === 'login' ? 'bg-[#2F78F5] text-white' : 'text-[#888] hover:text-white'
             }`}
           >
@@ -90,7 +136,7 @@ export default function Login() {
           <button
             type="button"
             onClick={() => setMode('signup')}
-            className={`flex-1 py-2.5 rounded-full text-xs font-display uppercase tracking-wider transition-all ${
+            className={`flex-1 py-2.5 rounded-full text-xs font-display uppercase tracking-wider transition-all min-h-[44px] ${
               mode === 'signup' ? 'bg-[#2F78F5] text-white' : 'text-[#888] hover:text-white'
             }`}
           >

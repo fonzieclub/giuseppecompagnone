@@ -14,6 +14,23 @@ const mapProfileToUser = (authUser, profile) => {
   };
 };
 
+const ensureProfile = async (authUser) => {
+  if (!authUser?.id) return;
+
+  const { data: existing } = await supabase
+    .from('profiles')
+    .select('id')
+    .eq('id', authUser.id)
+    .maybeSingle();
+
+  if (existing) return;
+
+  await supabase.from('profiles').insert({
+    id: authUser.id,
+    full_name: authUser.user_metadata?.full_name || authUser.email?.split('@')[0] || 'Utente',
+  });
+};
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [session, setSession] = useState(null);
@@ -29,6 +46,8 @@ export const AuthProvider = ({ children }) => {
     setSession(authSession);
 
     try {
+      await ensureProfile(authSession.user);
+
       const { data: profile, error } = await supabase
         .from('profiles')
         .select('full_name, role')
@@ -70,7 +89,7 @@ export const AuthProvider = ({ children }) => {
         if (error) throw error;
 
         if (mounted) {
-          loadUser(initialSession);
+          await loadUser(initialSession);
         }
       } catch (err) {
         console.warn('Auth init failed, continuing as guest:', err.message);
@@ -85,9 +104,9 @@ export const AuthProvider = ({ children }) => {
 
     init();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, nextSession) => {
       if (mounted) {
-        loadUser(nextSession);
+        await loadUser(nextSession);
         finishLoading();
       }
     });
@@ -99,20 +118,33 @@ export const AuthProvider = ({ children }) => {
   }, [loadUser]);
 
   const signUp = async ({ email, password, fullName }) => {
+    const redirectTo = `${window.location.origin}/recensioni`;
+
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: { full_name: fullName },
+        emailRedirectTo: redirectTo,
       },
     });
     if (error) throw error;
+
+    if (data.session) {
+      await loadUser(data.session);
+    }
+
     return data;
   };
 
   const signIn = async ({ email, password }) => {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) throw error;
+
+    if (data.session) {
+      await loadUser(data.session);
+    }
+
     return data;
   };
 

@@ -122,12 +122,20 @@ export default function Recensioni() {
               </button>
             </>
           ) : (
-            <Link
-              to="/login?redirect=/recensioni"
-              className="px-10 py-5 rounded-full bg-[#2F78F5] text-white font-display uppercase text-sm tracking-wider font-semibold hover:shadow-[0_0_30px_rgba(47,120,245,0.4)] transition-all btn-sweep max-w-sm w-full text-center"
-            >
-              {t('ACCEDI PER LASCIARE UNA RECENSIONE', 'LOGIN TO LEAVE A REVIEW')}
-            </Link>
+            <div className="flex flex-col items-center gap-3 w-full max-w-sm">
+              <Link
+                to="/login?redirect=/recensioni&mode=signup"
+                className="px-10 py-5 rounded-full bg-[#2F78F5] text-white font-display uppercase text-sm tracking-wider font-semibold hover:shadow-[0_0_30px_rgba(47,120,245,0.4)] transition-all btn-sweep w-full text-center min-h-[48px] flex items-center justify-center"
+              >
+                {t('REGISTRATI PER LASCIARE UNA RECENSIONE', 'SIGN UP TO LEAVE A REVIEW')}
+              </Link>
+              <Link
+                to="/login?redirect=/recensioni&mode=login"
+                className="text-sm text-[#888] hover:text-[#2F78F5] transition-colors underline"
+              >
+                {t('Hai già un account? Accedi', 'Already have an account? Log in')}
+              </Link>
+            </div>
           )}
         </div>
 

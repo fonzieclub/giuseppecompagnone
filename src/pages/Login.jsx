@@ -18,7 +18,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
 
   const inputClass =
-    'w-full bg-white/5 border border-white/10 rounded-full px-6 py-4 text-[#F2F2F2] text-sm font-body placeholder:text-[#555] focus:border-[#2F78F5] focus:ring-1 focus:ring-[#2F78F5] focus:outline-none transition-all min-h-[48px]';
+    'w-full bg-white/5 border border-white/10 rounded-full px-6 py-4 text-[#F2F2F2] text-base sm:text-sm font-body placeholder:text-[#555] focus:border-[#2F78F5] focus:ring-1 focus:ring-[#2F78F5] focus:outline-none transition-all min-h-[48px]';
 
   const handleGoogleSignIn = async () => {
     setLoading(true);

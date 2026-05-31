@@ -133,13 +133,13 @@ export default function AdminGallery() {
     loadItems();
   };
 
-  const inputClass = 'w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-[#F2F2F2] placeholder:text-[#555] focus:border-[#2F78F5] focus:outline-none';
+  const inputClass = 'w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-base sm:text-sm text-[#F2F2F2] placeholder:text-[#555] focus:border-[#2F78F5] focus:outline-none';
 
   return (
-    <div className="p-8 lg:p-12 max-w-5xl">
-      <div className="flex items-start justify-between mb-8 gap-4">
+    <div className="p-4 sm:p-8 lg:p-12 max-w-5xl mx-auto w-full">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-6 sm:mb-8 gap-4">
         <div>
-          <h1 className="text-2xl font-display font-bold text-white uppercase tracking-widest">
+          <h1 className="text-xl sm:text-2xl font-display font-bold text-white uppercase tracking-widest">
             Galleria Trasformazioni
           </h1>
           <p className="text-sm text-[#666] mt-2">
@@ -149,7 +149,7 @@ export default function AdminGallery() {
         {!form && (
           <button
             onClick={() => setForm({ ...emptyForm, sort_order: items.length + 1 })}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#2F78F5] text-white text-xs font-display uppercase tracking-wider shrink-0"
+            className="flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-[#2F78F5] text-white text-xs font-display uppercase tracking-wider w-full sm:w-auto min-h-[44px]"
           >
             <Plus size={14} /> Aggiungi
           </button>
@@ -157,7 +157,7 @@ export default function AdminGallery() {
       </div>
 
       {form && (
-        <form onSubmit={handleSave} className="bg-white/[0.03] border border-white/10 rounded-2xl p-6 mb-8 space-y-4">
+        <form onSubmit={handleSave} className="bg-white/[0.03] border border-white/10 rounded-2xl p-4 sm:p-6 mb-6 sm:mb-8 space-y-4">
           <h2 className="font-display font-bold text-white uppercase tracking-wider text-sm">
             {form.id ? 'Modifica voce' : 'Nuova voce'}
           </h2>
@@ -199,10 +199,10 @@ export default function AdminGallery() {
               {form.image_url && (
                 <img src={form.image_url} alt="" className="w-24 h-24 object-cover rounded-xl border border-white/10" />
               )}
-              <label className="flex items-center gap-2 px-4 py-3 rounded-xl border border-dashed border-white/20 text-sm text-[#888] hover:border-[#2F78F5] hover:text-[#2F78F5] cursor-pointer transition-all">
+              <label className="flex items-center gap-2 px-4 py-3 rounded-xl border border-dashed border-white/20 text-sm text-[#888] hover:border-[#2F78F5] hover:text-[#2F78F5] cursor-pointer transition-all min-h-[48px] w-full sm:w-auto">
                 <Upload size={16} />
                 {uploading ? 'Caricamento...' : 'Carica foto'}
-                <input type="file" accept="image/*" className="hidden" onChange={handleImageChange} disabled={uploading} />
+                <input type="file" accept="image/*" capture="environment" className="hidden" onChange={handleImageChange} disabled={uploading} />
               </label>
             </div>
           </div>
@@ -212,11 +212,11 @@ export default function AdminGallery() {
             Pubblicato (visibile sul sito)
           </label>
 
-          <div className="flex gap-3 pt-2">
-            <button type="submit" disabled={saving} className="px-6 py-2.5 rounded-full bg-[#2F78F5] text-white text-xs font-display uppercase tracking-wider disabled:opacity-50">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-2">
+            <button type="submit" disabled={saving} className="px-6 py-3 rounded-full bg-[#2F78F5] text-white text-xs font-display uppercase tracking-wider disabled:opacity-50 min-h-[44px] w-full sm:w-auto">
               {saving ? 'Salvataggio...' : 'Salva'}
             </button>
-            <button type="button" onClick={() => setForm(null)} className="px-6 py-2.5 rounded-full border border-white/20 text-[#888] text-xs font-display uppercase tracking-wider">
+            <button type="button" onClick={() => setForm(null)} className="px-6 py-3 rounded-full border border-white/20 text-[#888] text-xs font-display uppercase tracking-wider min-h-[44px] w-full sm:w-auto">
               Annulla
             </button>
           </div>
@@ -241,14 +241,14 @@ export default function AdminGallery() {
                 </div>
                 <p className="text-xs text-[#666] mb-3 line-clamp-2">{item.desc_it}</p>
                 <div className="flex gap-2">
-                  <button onClick={() => setForm(item)} className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-[#888] hover:text-white transition-all">
-                    <Pencil size={14} />
+                  <button onClick={() => setForm(item)} className="p-3 rounded-lg bg-white/5 hover:bg-white/10 text-[#888] hover:text-white transition-all min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="Modifica">
+                    <Pencil size={16} />
                   </button>
-                  <button onClick={() => togglePublished(item)} className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-[#888] hover:text-white transition-all">
-                    {item.is_published ? <Eye size={14} /> : <EyeOff size={14} />}
+                  <button onClick={() => togglePublished(item)} className="p-3 rounded-lg bg-white/5 hover:bg-white/10 text-[#888] hover:text-white transition-all min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label={item.is_published ? 'Nascondi' : 'Pubblica'}>
+                    {item.is_published ? <Eye size={16} /> : <EyeOff size={16} />}
                   </button>
-                  <button onClick={() => handleDelete(item.id)} className="p-2 rounded-lg bg-white/5 hover:bg-red-400/10 text-[#888] hover:text-red-400 transition-all">
-                    <Trash2 size={14} />
+                  <button onClick={() => handleDelete(item.id)} className="p-3 rounded-lg bg-white/5 hover:bg-red-400/10 text-[#888] hover:text-red-400 transition-all min-w-[44px] min-h-[44px] flex items-center justify-center" aria-label="Elimina">
+                    <Trash2 size={16} />
                   </button>
                 </div>
               </div>

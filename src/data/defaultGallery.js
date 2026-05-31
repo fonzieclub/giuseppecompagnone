@@ -1,0 +1,18 @@
+export const defaultGallery = [
+  { name_it: 'Filippo', name_en: 'Filippo', result_it: '-24kg', result_en: '-24kg', desc_it: 'Ricomposizione corporea', desc_en: 'Body recomposition', image_url: '/images/transformations/01-filippo.jpg', sort_order: 1 },
+  { name_it: 'Mario', name_en: 'Mario', result_it: '-42kg', result_en: '-42kg', desc_it: 'Ricomposizione corporea', desc_en: 'Body recomposition', image_url: '/images/transformations/02-mario.jpg', sort_order: 2 },
+  { name_it: 'Juliana', name_en: 'Juliana', result_it: '-5kg', result_en: '-5kg', desc_it: 'Ricomposizione + aumento massa muscolare', desc_en: 'Recomposition + muscle mass increase', image_url: '/images/transformations/03-juliana.jpg', sort_order: 3 },
+  { name_it: 'Irina', name_en: 'Irina', result_it: '-5kg', result_en: '-5kg', desc_it: 'Ricomposizione corporea', desc_en: 'Body recomposition', image_url: '/images/transformations/04-irina.jpg', sort_order: 4 },
+  { name_it: 'Stacy', name_en: 'Stacy', result_it: '-14kg', result_en: '-14kg', desc_it: 'Ricomposizione corporea', desc_en: 'Body recomposition', image_url: '/images/transformations/05-stacy.jpg', sort_order: 5 },
+  { name_it: 'Cassia', name_en: 'Cassia', result_it: '+6kg', result_en: '+6kg', desc_it: 'Ricomposizione corporea + aumento massa muscolare', desc_en: 'Body recomposition + muscle mass increase', image_url: '/images/transformations/06-cassia.jpg', sort_order: 6 },
+  { name_it: 'Armando', name_en: 'Armando', result_it: '-27kg', result_en: '-27kg', desc_it: 'Ricomposizione + aumento massa muscolare', desc_en: 'Recomposition + muscle mass increase', image_url: '/images/transformations/07-armando.jpg', sort_order: 7 },
+  { name_it: 'Victoria', name_en: 'Victoria', result_it: '-4kg', result_en: '-4kg', desc_it: 'Ricomposizione corporea', desc_en: 'Body recomposition', image_url: '/images/transformations/08-victoria.jpg', sort_order: 8 },
+  { name_it: 'Alfredo', name_en: 'Alfredo', result_it: '+8kg', result_en: '+8kg', desc_it: 'Ricomposizione corporea + aumento massa muscolare', desc_en: 'Body recomposition + muscle mass increase', image_url: '/images/transformations/09-alfredo.jpg', sort_order: 9 },
+  { name_it: 'Claudia', name_en: 'Claudia', result_it: '+2kg', result_en: '+2kg', desc_it: 'Aumento massa muscolare', desc_en: 'Muscle mass increase', image_url: '/images/transformations/10-claudia.jpg', sort_order: 10 },
+  { name_it: 'Massimo', name_en: 'Massimo', result_it: '-11kg', result_en: '-11kg', desc_it: 'Ricomposizione corporea', desc_en: 'Body recomposition', image_url: '/images/transformations/11-massimo.jpg', sort_order: 11 },
+  { name_it: 'Vincenzo', name_en: 'Vincenzo', result_it: '+7kg', result_en: '+7kg', desc_it: 'Aumento massa muscolare', desc_en: 'Muscle mass increase', image_url: '/images/transformations/12-vincenzo.jpg', sort_order: 12 },
+  { name_it: 'Pietro', name_en: 'Pietro', result_it: '-6kg', result_en: '-6kg', desc_it: 'Ricomposizione corporea', desc_en: 'Body recomposition', image_url: '/images/transformations/13-pietro.jpg', sort_order: 13 },
+  { name_it: 'Luciana', name_en: 'Luciana', result_it: '-5kg', result_en: '-5kg', desc_it: 'Ricomposizione corporea', desc_en: 'Body recomposition', image_url: '/images/transformations/14-luciana.jpg', sort_order: 14 },
+  { name_it: 'Angela', name_en: 'Angela', result_it: '-7kg', result_en: '-7kg', desc_it: 'Ricomposizione corporea', desc_en: 'Body recomposition', image_url: '/images/transformations/15-angela.jpg', sort_order: 15 },
+  { name_it: 'Ferdinando', name_en: 'Ferdinando', result_it: '-5kg', result_en: '-5kg', desc_it: 'Ricomposizione corporea', desc_en: 'Body recomposition', image_url: '/images/transformations/16-ferdinando.jpg', sort_order: 16 },
+];

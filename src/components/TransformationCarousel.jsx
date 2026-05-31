@@ -1,121 +1,8 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { useLang } from '../lib/LanguageContext';
-
-const transformations = [
-  {
-    nameIT: 'Filippo', nameEN: 'Filippo',
-    resultIT: '-24kg', resultEN: '-24kg',
-    descIT: 'Ricomposizione corporea',
-    descEN: 'Body recomposition',
-    photo: '/images/transformations/01-filippo.jpg',
-  },
-  {
-    nameIT: 'Mario', nameEN: 'Mario',
-    resultIT: '-42kg', resultEN: '-42kg',
-    descIT: 'Ricomposizione corporea',
-    descEN: 'Body recomposition',
-    photo: '/images/transformations/02-mario.jpg',
-  },
-  {
-    nameIT: 'Juliana', nameEN: 'Juliana',
-    resultIT: '-5kg', resultEN: '-5kg',
-    descIT: 'Ricomposizione + aumento massa muscolare',
-    descEN: 'Recomposition + muscle mass increase',
-    photo: '/images/transformations/03-juliana.jpg',
-  },
-  {
-    nameIT: 'Irina', nameEN: 'Irina',
-    resultIT: '-5kg', resultEN: '-5kg',
-    descIT: 'Ricomposizione corporea',
-    descEN: 'Body recomposition',
-    photo: '/images/transformations/04-irina.jpg',
-  },
-  {
-    nameIT: 'Stacy', nameEN: 'Stacy',
-    resultIT: '-14kg', resultEN: '-14kg',
-    descIT: 'Ricomposizione corporea',
-    descEN: 'Body recomposition',
-    photo: '/images/transformations/05-stacy.jpg',
-  },
-  {
-    nameIT: 'Cassia', nameEN: 'Cassia',
-    resultIT: '+6kg', resultEN: '+6kg',
-    descIT: 'Ricomposizione corporea + aumento massa muscolare',
-    descEN: 'Body recomposition + muscle mass increase',
-    photo: '/images/transformations/06-cassia.jpg',
-  },
-  {
-    nameIT: 'Armando', nameEN: 'Armando',
-    resultIT: '-27kg', resultEN: '-27kg',
-    descIT: 'Ricomposizione + aumento massa muscolare',
-    descEN: 'Recomposition + muscle mass increase',
-    photo: '/images/transformations/07-armando.jpg',
-  },
-  {
-    nameIT: 'Victoria', nameEN: 'Victoria',
-    resultIT: '-4kg', resultEN: '-4kg',
-    descIT: 'Ricomposizione corporea',
-    descEN: 'Body recomposition',
-    photo: '/images/transformations/08-victoria.jpg',
-  },
-  {
-    nameIT: 'Alfredo', nameEN: 'Alfredo',
-    resultIT: '+8kg', resultEN: '+8kg',
-    descIT: 'Ricomposizione corporea + aumento massa muscolare',
-    descEN: 'Body recomposition + muscle mass increase',
-    photo: '/images/transformations/09-alfredo.jpg',
-  },
-  {
-    nameIT: 'Claudia', nameEN: 'Claudia',
-    resultIT: '+2kg', resultEN: '+2kg',
-    descIT: 'Aumento massa muscolare',
-    descEN: 'Muscle mass increase',
-    photo: '/images/transformations/10-claudia.jpg',
-  },
-  {
-    nameIT: 'Massimo', nameEN: 'Massimo',
-    resultIT: '-11kg', resultEN: '-11kg',
-    descIT: 'Ricomposizione corporea',
-    descEN: 'Body recomposition',
-    photo: '/images/transformations/11-massimo.jpg',
-  },
-  {
-    nameIT: 'Vincenzo', nameEN: 'Vincenzo',
-    resultIT: '+7kg', resultEN: '+7kg',
-    descIT: 'Aumento massa muscolare',
-    descEN: 'Muscle mass increase',
-    photo: '/images/transformations/12-vincenzo.jpg',
-  },
-  {
-    nameIT: 'Pietro', nameEN: 'Pietro',
-    resultIT: '-6kg', resultEN: '-6kg',
-    descIT: 'Ricomposizione corporea',
-    descEN: 'Body recomposition',
-    photo: '/images/transformations/13-pietro.jpg',
-  },
-  {
-    nameIT: 'Luciana', nameEN: 'Luciana',
-    resultIT: '-5kg', resultEN: '-5kg',
-    descIT: 'Ricomposizione corporea',
-    descEN: 'Body recomposition',
-    photo: '/images/transformations/14-luciana.jpg',
-  },
-  {
-    nameIT: 'Angela', nameEN: 'Angela',
-    resultIT: '-7kg', resultEN: '-7kg',
-    descIT: 'Ricomposizione corporea',
-    descEN: 'Body recomposition',
-    photo: '/images/transformations/15-angela.jpg',
-  },
-  {
-    nameIT: 'Ferdinando', nameEN: 'Ferdinando',
-    resultIT: '-5kg', resultEN: '-5kg',
-    descIT: 'Ricomposizione corporea',
-    descEN: 'Body recomposition',
-    photo: '/images/transformations/16-ferdinando.jpg',
-  },
-];
+import { supabase } from '@/lib/supabase';
+import { defaultGallery } from '@/data/defaultGallery';
 
 function Lightbox({ src, onClose }) {
   useEffect(() => {
@@ -147,19 +34,35 @@ function Lightbox({ src, onClose }) {
 
 export default function TransformationCarousel() {
   const { t } = useLang();
+  const [transformations, setTransformations] = useState(defaultGallery);
   const [active, setActive] = useState(0);
   const [lightbox, setLightbox] = useState(null);
   const [paused, setPaused] = useState(false);
   const touchStartX = useRef(null);
 
-  const next = useCallback(() => setActive(p => (p + 1) % transformations.length), []);
-  const prev = useCallback(() => setActive(p => (p - 1 + transformations.length) % transformations.length), []);
+  useEffect(() => {
+    const load = async () => {
+      const { data, error } = await supabase
+        .from('gallery_items')
+        .select('*')
+        .eq('is_published', true)
+        .order('sort_order', { ascending: true });
+
+      if (!error && data?.length) {
+        setTransformations(data);
+      }
+    };
+    load();
+  }, []);
+
+  const next = useCallback(() => setActive(p => (p + 1) % transformations.length), [transformations.length]);
+  const prev = useCallback(() => setActive(p => (p - 1 + transformations.length) % transformations.length), [transformations.length]);
 
   useEffect(() => {
-    if (paused) return;
+    if (paused || transformations.length === 0) return;
     const id = setInterval(next, 5000);
     return () => clearInterval(id);
-  }, [paused, next]);
+  }, [paused, next, transformations.length]);
 
   const handleTouchStart = (e) => {
     touchStartX.current = e.touches[0].clientX;
@@ -171,6 +74,8 @@ export default function TransformationCarousel() {
     if (Math.abs(diff) > 50) diff > 0 ? next() : prev();
     touchStartX.current = null;
   };
+
+  if (transformations.length === 0) return null;
 
   const item = transformations[active];
 
@@ -187,34 +92,31 @@ export default function TransformationCarousel() {
       >
         <div className="mx-auto px-3 md:px-12 transition-all duration-500 ease-in-out" style={{ maxWidth: '900px' }}>
 
-          {/* Single photo */}
           <div
             className="relative w-full cursor-zoom-in rounded-2xl overflow-hidden group"
             style={{ boxShadow: '0 20px 60px rgba(47, 120, 245, 0.2), 0 8px 20px rgba(47, 120, 245, 0.15)' }}
-            onClick={() => setLightbox(item.photo)}
+            onClick={() => setLightbox(item.image_url)}
           >
             <img
               key={active}
-              src={item.photo}
-              alt={t(item.nameIT, item.nameEN)}
+              src={item.image_url}
+              alt={t(item.name_it, item.name_en)}
               className="w-full h-auto block transition-transform duration-700 group-hover:scale-105"
             />
           </div>
 
-          {/* Text block */}
           <div className="mt-6 bg-white/[0.02] border border-white/5 rounded-2xl p-6 md:p-8">
             <h4 className="text-2xl md:text-3xl font-display font-bold uppercase text-[#F2F2F2] mb-1">
-              {t(item.nameIT, item.nameEN)}
+              {t(item.name_it, item.name_en)}
             </h4>
             <p className="text-[#2F78F5] text-lg md:text-xl font-display font-semibold mb-3">
-              {t(item.resultIT, item.resultEN)}
+              {t(item.result_it, item.result_en)}
             </p>
             <p className="text-sm text-[#999] leading-relaxed">
-              {t(item.descIT, item.descEN)}
+              {t(item.desc_it, item.desc_en)}
             </p>
           </div>
 
-          {/* Navigation */}
           <div className="flex items-center justify-center gap-6 mt-8">
             <button
               onClick={prev}

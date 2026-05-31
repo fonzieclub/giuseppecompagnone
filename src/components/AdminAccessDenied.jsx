@@ -30,7 +30,7 @@ export default function AdminAccessDenied() {
               to="/login?redirect=/admin/reviews"
               className="px-8 py-3 rounded-full bg-[#2F78F5] text-white font-display uppercase text-sm tracking-wider"
             >
-              Accedi
+              Accedi al dashboard
             </Link>
           )}
           <Link to="/" className="text-sm text-[#666] hover:text-[#2F78F5]">

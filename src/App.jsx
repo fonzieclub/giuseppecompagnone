@@ -1,12 +1,13 @@
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import { LanguageProvider } from './lib/LanguageContext';
 import Layout from './components/Layout';
 import AdminRoute from './components/AdminRoute';
+import AdminLayout from './components/admin/AdminLayout';
 import Home from './pages/Home';
 import Servizi from './pages/Servizi';
 import ChiSono from './pages/ChiSono';
@@ -17,7 +18,8 @@ import MetodoOnline from './pages/MetodoOnline';
 import Recensioni from './pages/Recensioni';
 import Contatti from './pages/Contatti';
 import Login from './pages/Login';
-import AdminReviews from './pages/AdminReviews';
+import AdminReviews from './pages/admin/AdminReviews';
+import AdminGallery from './pages/admin/AdminGallery';
 
 const AppRoutes = () => {
   const { isLoadingAuth } = useAuth();
@@ -33,6 +35,13 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
+
+      <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
+        <Route index element={<Navigate to="/admin/reviews" replace />} />
+        <Route path="reviews" element={<AdminReviews />} />
+        <Route path="gallery" element={<AdminGallery />} />
+      </Route>
+
       <Route element={<Layout />}>
         <Route path="/" element={<Home />} />
         <Route path="/servizi" element={<Servizi />} />
@@ -43,14 +52,6 @@ const AppRoutes = () => {
         <Route path="/metodo-online" element={<MetodoOnline />} />
         <Route path="/recensioni" element={<Recensioni />} />
         <Route path="/contatti" element={<Contatti />} />
-        <Route
-          path="/admin/reviews"
-          element={
-            <AdminRoute>
-              <AdminReviews />
-            </AdminRoute>
-          }
-        />
         <Route path="*" element={<PageNotFound />} />
       </Route>
     </Routes>

@@ -3,7 +3,7 @@
   "short_name": "GC Fitness",
   "icons": [
     {
-      "src": "/images/logo.png",
+      "src": "/favicon.png",
       "sizes": "512x512",
       "type": "image/png"
     }

@@ -1,5 +1,6 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthContext';
+import AdminAccessDenied from '@/components/AdminAccessDenied';
 
 const DefaultFallback = () => (
   <div className="fixed inset-0 flex items-center justify-center bg-[#050505]">
@@ -20,7 +21,7 @@ export default function AdminRoute({ children, fallback = <DefaultFallback /> })
   }
 
   if (!isAdmin) {
-    return <Navigate to="/" replace />;
+    return <AdminAccessDenied />;
   }
 
   return children;

@@ -24,7 +24,7 @@ export default function Home() {
         {/* Full-bleed background image */}
         <div className="absolute inset-0 z-0">
           <img
-            src="https://media.base44.com/images/public/69f51acefd0e16cb4ea978c4/a3e4d9b51_GiuseppeNoBG.png"
+            src="/images/hero-giuseppe.png"
             alt="Giuseppe Compagnone — Personal Trainer"
             className="w-full h-full object-cover object-top"
             style={{ transform: `scale(1.05) translateY(${scrollY * 0.05}px)`, transition: 'transform 0.1s linear' }}

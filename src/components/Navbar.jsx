@@ -24,7 +24,7 @@ export default function Navbar() {
       <div className="max-w-[1440px] mx-auto px-6 lg:px-12 h-20 flex items-center justify-between">
         <Link to="/" className="flex-shrink-0 flex items-center gap-4">
           <img
-            src="https://media.base44.com/images/public/69f51acefd0e16cb4ea978c4/f18ce7287_LogoGiuseppe.png"
+            src="/images/logo.png"
             alt="Giuseppe Compagnone"
             className="h-10 w-auto object-contain"
           />

@@ -22,7 +22,7 @@ export default function ChiSono() {
               style={{ background: 'linear-gradient(to right, #0a0a0a 0%, #1a2845 100%)' }}
             >
               <img
-                src="https://media.base44.com/images/public/69f51acefd0e16cb4ea978c4/716f14377_GiuseppeNoBGBlu.png"
+                src="/images/giuseppe-chi-sono.png"
                 alt="Giuseppe Compagnone — Personal Trainer Certificato"
                 className="w-full h-full object-cover ken-burns"
                 style={{

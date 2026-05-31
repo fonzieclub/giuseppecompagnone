@@ -22,7 +22,7 @@ export default function AppShowcase() {
         <ScrollReveal>
           <div className="relative mx-auto mb-10" style={{ width: '85vw', maxWidth: '1200px' }}>
             <img
-              src="https://media.base44.com/images/public/69f51acefd0e16cb4ea978c4/f34d328ef_Newphone.png"
+              src="/images/app-phone.png"
               alt="GC Fitness Coach App"
               className="w-full h-auto block"
 

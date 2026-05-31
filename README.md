@@ -1,39 +1,52 @@
-**Welcome to your Base44 project** 
+# Giuseppe Compagnone — Personal Trainer
 
-**About**
+Website for Giuseppe Compagnone, personal trainer. Built with React, Vite, Tailwind CSS, and Supabase.
 
-View and Edit  your app on [Base44.com](http://Base44.com) 
+## Local development
 
-This project contains everything you need to run your app locally.
-
-**Edit the code in your local development environment**
-
-Any change pushed to the repo will also be reflected in the Base44 Builder.
-
-**Prerequisites:** 
-
-1. Clone the repository using the project's Git URL 
-2. Navigate to the project directory
-3. Install dependencies: `npm install`
-4. Create an `.env.local` file and set the right environment variables
-
-```
-VITE_BASE44_APP_ID=your_app_id
-VITE_BASE44_APP_BASE_URL=your_backend_url
-
-e.g.
-VITE_BASE44_APP_ID=cbef744a8545c389ef439ea6
-VITE_BASE44_APP_BASE_URL=https://my-to-do-list-81bfaad7.base44.app
+```bash
+npm install
+cp .env.example .env.local
+# Add your Supabase URL and anon key to .env.local
+npm run dev
 ```
 
-Run the app: `npm run dev`
+Open [http://localhost:5173](http://localhost:5173).
 
-**Publish your changes**
+## Environment variables
 
-Open [Base44.com](http://Base44.com) and click on Publish.
+Set these in `.env.local` (local) and in **Vercel → Settings → Environment Variables** (production):
 
-**Docs & Support**
+| Variable | Description |
+|----------|-------------|
+| `VITE_SUPABASE_URL` | Supabase project URL |
+| `VITE_SUPABASE_ANON_KEY` | Supabase anon/public key |
 
-Documentation: [https://docs.base44.com/Integrations/Using-GitHub](https://docs.base44.com/Integrations/Using-GitHub)
+## Deploy (Vercel)
 
-Support: [https://app.base44.com/support](https://app.base44.com/support)
+1. Push to GitHub
+2. Import the repo in [Vercel](https://vercel.com)
+3. Add the environment variables above
+4. Deploy — build command: `npm run build`, output: `dist`
+
+## Supabase setup
+
+Run the migration in `supabase/migrations/20260531200000_initial_schema.sql` via the Supabase SQL Editor.
+
+To make yourself admin after signing up:
+
+```sql
+update public.profiles
+set role = 'admin'
+where id = (select id from auth.users where email = 'your@email.com');
+```
+
+Admin panel: `/admin/reviews`
+
+## Project structure
+
+- `src/pages/` — page components
+- `src/components/` — reusable UI
+- `public/images/` — site images (self-hosted)
+- `src/data/legacyReviews.js` — reviews exported from Base44
+- `supabase/` — database migrations and edge functions

@@ -11,7 +11,7 @@ const services = [
     titleEN: '01 — 1:1 TRAINING',
     descIT: 'Allenamenti individuali con supervisione costante e cura di ogni dettaglio.',
     descEN: 'Individual training sessions with constant supervision and attention to every detail.',
-    image: 'https://media.base44.com/images/public/69f51acefd0e16cb4ea978c4/4286eb487_generated_b97c7820.png',
+    image: '/images/servizio-personale.png',
     href: '/metodo-personale',
   },
   {
@@ -20,7 +20,7 @@ const services = [
     titleEN: '02 — ONLINE COACHING',
     descIT: 'Allenamento personalizzato e supervisione settimanale, per risultati ovunque tu sia.',
     descEN: 'Personalised training and weekly supervision, for results wherever you are.',
-    image: 'https://media.base44.com/images/public/69f51acefd0e16cb4ea978c4/af45d6421_generated_207f0899.png',
+    image: '/images/servizio-online.png',
     href: '/metodo-online',
   },
 ];

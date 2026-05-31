@@ -75,7 +75,16 @@ export const AuthProvider = ({ children }) => {
     };
 
     const init = async () => {
+      const isAuthCallback = window.location.pathname === '/auth/callback';
+
       try {
+        if (isAuthCallback) {
+          // OAuth callback page handles session exchange — don't timeout here
+          const { data: { session: initialSession } } = await supabase.auth.getSession();
+          if (mounted) await loadUser(initialSession);
+          return;
+        }
+
         const sessionPromise = supabase.auth.getSession();
         const timeoutPromise = new Promise((_, reject) =>
           setTimeout(() => reject(new Error('Auth timeout')), 8000)
@@ -149,10 +158,16 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signInWithGoogle = async (redirectTo = '/recensioni') => {
+    sessionStorage.setItem('auth_redirect', redirectTo);
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}${redirectTo.startsWith('/') ? redirectTo : `/${redirectTo}`}`,
+        redirectTo: `${window.location.origin}/auth/callback`,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+        },
       },
     });
     if (error) throw error;

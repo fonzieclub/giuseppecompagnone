@@ -10,10 +10,14 @@ import ScrollReveal from '../components/ScrollReveal';
 import ReviewSuccessModal from '../components/ReviewSuccessModal';
 import { legacyReviews } from '@/data/legacyReviews';
 
+const sortedLegacy = [...legacyReviews].sort(
+  (a, b) => new Date(b.created_at) - new Date(a.created_at)
+);
+
 export default function Recensioni() {
   const { t } = useLang();
   const { user, isAuthenticated, signOut } = useAuth();
-  const [reviews, setReviews] = useState([]);
+  const [reviews, setReviews] = useState(sortedLegacy);
   const [showForm, setShowForm] = useState(false);
   const [rating, setRating] = useState(5);
   const [text, setText] = useState('');
@@ -26,7 +30,8 @@ export default function Recensioni() {
   }, []);
 
   const loadReviews = async () => {
-    let supabaseReviews = [];
+    // Always show legacy reviews immediately; merge Supabase reviews when ready
+    setReviews(sortedLegacy);
 
     const { data, error } = await supabase
       .from('reviews')
@@ -37,13 +42,15 @@ export default function Recensioni() {
 
     if (error) {
       console.error('Error loading reviews:', error);
-    } else {
-      supabaseReviews = data || [];
+      return;
     }
 
-    const merged = [...supabaseReviews, ...legacyReviews].sort(
-      (a, b) => new Date(b.created_at) - new Date(a.created_at)
-    );
+    const supabaseReviews = data || [];
+    const merged = [
+      ...supabaseReviews,
+      ...sortedLegacy.filter(r => !supabaseReviews.some(s => s.id === r.id)),
+    ].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
     setReviews(merged);
   };
 

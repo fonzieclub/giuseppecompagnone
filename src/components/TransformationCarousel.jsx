@@ -13,7 +13,7 @@ export default function TransformationCarousel() {
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
   const containerRef = useRef(null);
-  const slideRef = useRef(null);
+  const trackRef = useRef(null);
   const touchStartX = useRef(null);
   const touchStartY = useRef(null);
   const dragOffsetRef = useRef(0);
@@ -43,63 +43,50 @@ export default function TransformationCarousel() {
     load();
   }, []);
 
-  const applyTransform = useCallback((offsetPx, animate) => {
-    const el = slideRef.current;
-    if (!el) return;
-    el.style.transition = animate ? `transform ${SLIDE_MS}ms cubic-bezier(0.25, 0.46, 0.45, 0.94)` : 'none';
-    el.style.transform = offsetPx === 0 ? 'translate3d(0,0,0)' : `translate3d(${offsetPx}px,0,0)`;
+  const updateTrack = useCallback((animate) => {
+    const track = trackRef.current;
+    if (!track) return;
+    const offset = dragOffsetRef.current;
+    track.style.transition = animate
+      ? `transform ${SLIDE_MS}ms cubic-bezier(0.25, 0.46, 0.45, 0.94)`
+      : 'none';
+    track.style.transform = `translate3d(calc(-${activeRef.current * 100}% + ${offset}px), 0, 0)`;
   }, []);
 
-  const scheduleTransform = useCallback((offsetPx, animate) => {
+  const scheduleTrackUpdate = useCallback((animate) => {
     if (rafId.current) cancelAnimationFrame(rafId.current);
     rafId.current = requestAnimationFrame(() => {
-      applyTransform(offsetPx, animate);
+      updateTrack(animate);
       rafId.current = null;
     });
-  }, [applyTransform]);
-
-  const commitSlide = useCallback((direction) => {
-    const width = containerRef.current?.offsetWidth || 1;
-    const target = direction === 'next' ? -width : width;
-
-    applyTransform(target, true);
-
-    window.setTimeout(() => {
-      const c = countRef.current;
-      if (c === 0) return;
-      const nextIndex =
-        direction === 'next'
-          ? (activeRef.current + 1) % c
-          : (activeRef.current - 1 + c) % c;
-      dragOffsetRef.current = 0;
-      setActive(nextIndex);
-      applyTransform(0, false);
-    }, SLIDE_MS);
-  }, [applyTransform]);
+  }, [updateTrack]);
 
   const goTo = useCallback((index) => {
     const c = countRef.current;
     if (c === 0) return;
     const target = ((index % c) + c) % c;
     if (target === activeRef.current) return;
+    dragOffsetRef.current = 0;
+    setActive(target);
+  }, []);
 
-    const direction = target > activeRef.current ? 'next' : 'prev';
-    if (target === (activeRef.current + 1) % c) {
-      commitSlide('next');
-    } else if (target === (activeRef.current - 1 + c) % c) {
-      commitSlide('prev');
-    } else {
-      dragOffsetRef.current = 0;
-      setActive(target);
-      applyTransform(0, false);
-    }
-  }, [commitSlide, applyTransform]);
+  const step = useCallback((direction) => {
+    const c = countRef.current;
+    if (c === 0) return;
+    dragOffsetRef.current = 0;
+    setActive(prev => (direction === 'next' ? prev + 1 : prev - 1 + c) % c);
+  }, []);
+
+  useEffect(() => {
+    dragOffsetRef.current = 0;
+    scheduleTrackUpdate(true);
+  }, [active, scheduleTrackUpdate]);
 
   useEffect(() => {
     if (paused || count === 0) return;
-    const id = window.setInterval(() => commitSlide('next'), AUTO_MS);
+    const id = window.setInterval(() => step('next'), AUTO_MS);
     return () => clearInterval(id);
-  }, [paused, count, commitSlide]);
+  }, [paused, count, step]);
 
   useEffect(() => {
     if (count < 2) return;
@@ -125,7 +112,7 @@ export default function TransformationCarousel() {
       dragOffsetRef.current = 0;
       isHorizontalLock.current = false;
       setPaused(true);
-      if (slideRef.current) slideRef.current.style.willChange = 'transform';
+      if (trackRef.current) trackRef.current.style.willChange = 'transform';
     };
 
     const onTouchMove = (e) => {
@@ -149,8 +136,16 @@ export default function TransformationCarousel() {
       }
 
       e.preventDefault();
-      dragOffsetRef.current = dx;
-      scheduleTransform(dx, false);
+
+      const c = countRef.current;
+      let resisted = dx;
+      if (c > 1) {
+        if (activeRef.current === 0 && dx > 0) resisted = dx * 0.2;
+        if (activeRef.current === c - 1 && dx < 0) resisted = dx * 0.2;
+      }
+
+      dragOffsetRef.current = resisted;
+      scheduleTrackUpdate(false);
     };
 
     const onTouchEnd = (e) => {
@@ -164,7 +159,7 @@ export default function TransformationCarousel() {
       touchStartY.current = null;
       isHorizontalLock.current = false;
 
-      if (slideRef.current) slideRef.current.style.willChange = 'auto';
+      if (trackRef.current) trackRef.current.style.willChange = 'auto';
 
       if (!wasLocked) {
         setPaused(false);
@@ -172,10 +167,10 @@ export default function TransformationCarousel() {
       }
 
       if (Math.abs(diff) > width * 0.12) {
-        commitSlide(diff > 0 ? 'next' : 'prev');
+        step(diff > 0 ? 'next' : 'prev');
       } else {
         dragOffsetRef.current = 0;
-        scheduleTransform(0, true);
+        scheduleTrackUpdate(true);
       }
 
       setPaused(false);
@@ -193,7 +188,7 @@ export default function TransformationCarousel() {
       el.removeEventListener('touchcancel', onTouchEnd);
       if (rafId.current) cancelAnimationFrame(rafId.current);
     };
-  }, [commitSlide, scheduleTransform]);
+  }, [step, scheduleTrackUpdate]);
 
   if (count === 0) return null;
 
@@ -207,16 +202,20 @@ export default function TransformationCarousel() {
     >
       <div className="mx-auto px-3 md:px-12" style={{ maxWidth: '900px' }}>
         <div ref={containerRef} className="carousel-viewport relative w-full overflow-hidden rounded-2xl">
-          <div ref={slideRef} className="carousel-slide">
-            <img
-              key={slideKey(item)}
-              src={item.image_url}
-              alt={t(item.name_it, item.name_en)}
-              className="carousel-slide-img"
-              draggable={false}
-              decoding="async"
-              fetchPriority="high"
-            />
+          <div ref={trackRef} className="carousel-track flex">
+            {transformations.map((slide, i) => (
+              <div key={slideKey(slide)} className="carousel-slide-cell">
+                <img
+                  src={slide.image_url}
+                  alt={t(slide.name_it, slide.name_en)}
+                  className="carousel-slide-img"
+                  draggable={false}
+                  decoding="async"
+                  loading={Math.abs(i - active) <= 1 ? 'eager' : 'lazy'}
+                  fetchPriority={i === active ? 'high' : 'low'}
+                />
+              </div>
+            ))}
           </div>
         </div>
 
@@ -235,7 +234,7 @@ export default function TransformationCarousel() {
         <div className="flex items-center justify-center gap-6 mt-8">
           <button
             type="button"
-            onClick={() => commitSlide('prev')}
+            onClick={() => step('prev')}
             className="hidden md:flex px-6 py-3 rounded-full border border-[#2F78F5] text-[#2F78F5] text-xs font-display uppercase tracking-widest hover:bg-[#2F78F5] hover:text-white transition-colors duration-300 min-h-[44px]"
           >
             PREV
@@ -254,7 +253,7 @@ export default function TransformationCarousel() {
           </div>
           <button
             type="button"
-            onClick={() => commitSlide('next')}
+            onClick={() => step('next')}
             className="hidden md:flex px-6 py-3 rounded-full border border-[#2F78F5] text-[#2F78F5] text-xs font-display uppercase tracking-widest hover:bg-[#2F78F5] hover:text-white transition-colors duration-300 min-h-[44px]"
           >
             NEXT

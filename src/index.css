@@ -218,6 +218,7 @@ html {
 
 .gallery-marquee-content {
   display: flex;
+  align-items: center;
   gap: 12px;
   width: max-content;
   animation: gallery-scroll var(--marquee-duration, 24s) linear infinite;
@@ -236,9 +237,11 @@ html {
 
 .gallery-marquee-img {
   flex-shrink: 0;
-  width: 148px;
+  display: block;
   height: 200px;
-  object-fit: cover;
+  width: auto;
+  max-width: none;
+  object-fit: contain;
   border-radius: 12px;
   pointer-events: none;
   user-select: none;
@@ -251,14 +254,12 @@ html {
   }
 
   .gallery-marquee-img {
-    width: 220px;
     height: 280px;
   }
 }
 
 @media (min-width: 1024px) {
   .gallery-marquee-img {
-    width: 260px;
     height: 320px;
   }
 }
@@ -279,7 +280,10 @@ html {
 
 /* Transformation carousel (Risultati) */
 .carousel-viewport {
-  contain: layout style paint;
+  contain: layout paint;
+  touch-action: pan-x;
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: auto;
   box-shadow: 0 12px 40px rgba(47, 120, 245, 0.15);
 }
 
@@ -292,24 +296,37 @@ html {
 .carousel-slide {
   backface-visibility: hidden;
   transform: translate3d(0, 0, 0);
+  will-change: transform;
 }
 
 .carousel-slide-img {
   display: block;
   width: 100%;
-  height: auto;
-  max-height: min(70vh, 520px);
-  object-fit: contain;
+  height: 100%;
   pointer-events: none;
   user-select: none;
   -webkit-user-drag: none;
+  object-fit: contain;
+  max-height: min(70vh, 520px);
 }
 
 @media (max-width: 767px) {
-  .carousel-slide-img {
-    max-height: min(65vh, 420px);
-    object-fit: cover;
+  .carousel-viewport {
     aspect-ratio: 1;
+    max-height: min(72vw, 400px);
+    touch-action: none;
+    contain: strict;
+  }
+
+  .carousel-slide {
+    height: 100%;
+  }
+
+  .carousel-slide-img {
+    width: 100%;
+    height: 100%;
+    max-height: none;
+    object-fit: cover;
   }
 }
 

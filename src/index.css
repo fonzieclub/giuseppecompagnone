@@ -303,16 +303,16 @@ html {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 12px;
+  padding: 4px;
   box-sizing: border-box;
-  min-height: 260px;
+  min-height: min(75vh, 640px);
 }
 
 .carousel-slide-img {
   display: block;
+  width: 100%;
   max-width: 100%;
-  max-height: min(70vh, 520px);
-  width: auto;
+  max-height: min(75vh, 640px);
   height: auto;
   object-fit: contain;
   pointer-events: none;
@@ -326,12 +326,13 @@ html {
   }
 
   .carousel-slide-cell {
-    min-height: 240px;
-    padding: 8px;
+    min-height: min(92vw, 520px);
+    padding: 2px;
   }
 
   .carousel-slide-img {
-    max-height: min(75vw, 420px);
+    max-height: min(92vw, 520px);
+    width: 100%;
   }
 }
 

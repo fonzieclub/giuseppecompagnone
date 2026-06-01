@@ -200,7 +200,7 @@ export default function TransformationCarousel() {
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      <div className="mx-auto px-3 md:px-12" style={{ maxWidth: '900px' }}>
+      <div className="mx-auto px-1 sm:px-3 md:px-12" style={{ maxWidth: '960px' }}>
         <div ref={containerRef} className="carousel-viewport relative w-full overflow-hidden rounded-2xl">
           <div ref={trackRef} className="carousel-track flex">
             {transformations.map((slide, i) => (

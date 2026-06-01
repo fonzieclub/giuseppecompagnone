@@ -209,6 +209,42 @@ html {
   }
 }
 
+/* Gallery image marquee */
+.gallery-marquee-container {
+  width: 100%;
+  overflow: hidden;
+}
+
+.gallery-marquee-content {
+  display: flex;
+  gap: 16px;
+  width: fit-content;
+  animation: scroll-left 50s linear infinite;
+}
+
+.gallery-marquee-img {
+  flex-shrink: 0;
+  height: 220px;
+  width: auto;
+  max-width: none;
+  object-fit: cover;
+  border-radius: 12px;
+  pointer-events: none;
+  user-select: none;
+}
+
+@media (min-width: 768px) {
+  .gallery-marquee-img {
+    height: 280px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .gallery-marquee-img {
+    height: 320px;
+  }
+}
+
 /* Count up glow */
 .glow-blue {
   text-shadow: 0 0 20px rgba(47, 120, 245, 0.4);

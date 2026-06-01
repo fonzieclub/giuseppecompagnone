@@ -6,6 +6,7 @@ import MagneticButton from '../components/MagneticButton';
 import CountUp from '../components/CountUp';
 import MarqueeStrip from '../components/MarqueeStrip';
 import StatsBanner from '../components/StatsBanner';
+import TransformationMarquee from '../components/TransformationMarquee';
 import AppShowcase from '../components/AppShowcase';
 
 export default function Home() {
@@ -69,6 +70,17 @@ export default function Home() {
       {/* Marquee */}
       <MarqueeStrip />
       <StatsBanner />
+
+      <section className="bg-[#050505] pt-16 pb-8 md:pt-24 md:pb-12">
+        <div className="max-w-[1440px] mx-auto px-6 lg:px-12 mb-12 w-full flex justify-center">
+          <AnimatedHeadline
+            text={t('TRASFORMAZIONI', 'TRANSFORMATIONS')}
+            className="text-4xl md:text-6xl font-display font-bold uppercase text-center w-full"
+          />
+        </div>
+        <TransformationMarquee />
+      </section>
+
       <AppShowcase />
     </>
   );

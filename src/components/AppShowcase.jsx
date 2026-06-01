@@ -6,7 +6,7 @@ export default function AppShowcase() {
   const { t } = useLang();
 
   return (
-    <section className="bg-[#050505] py-24 md:py-36">
+    <section className="bg-[#050505] pt-8 pb-24 md:pt-12 md:pb-36">
       <div className="max-w-[1440px] mx-auto px-6 lg:px-12 text-center">
         <AnimatedHeadline
           text={t('Il tuo percorso, sempre con te', 'Your journey, always with you')}

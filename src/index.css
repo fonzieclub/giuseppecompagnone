@@ -277,6 +277,42 @@ html {
   }
 }
 
+/* Transformation carousel (Risultati) */
+.carousel-viewport {
+  contain: layout style paint;
+  box-shadow: 0 12px 40px rgba(47, 120, 245, 0.15);
+}
+
+@media (min-width: 768px) {
+  .carousel-viewport {
+    box-shadow: 0 20px 60px rgba(47, 120, 245, 0.2), 0 8px 20px rgba(47, 120, 245, 0.15);
+  }
+}
+
+.carousel-slide {
+  backface-visibility: hidden;
+  transform: translate3d(0, 0, 0);
+}
+
+.carousel-slide-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: min(70vh, 520px);
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+@media (max-width: 767px) {
+  .carousel-slide-img {
+    max-height: min(65vh, 420px);
+    object-fit: cover;
+    aspect-ratio: 1;
+  }
+}
+
 /* Count up glow */
 .glow-blue {
   text-shadow: 0 0 20px rgba(47, 120, 245, 0.4);

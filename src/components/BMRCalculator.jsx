@@ -144,9 +144,9 @@ const personalizedMessages = {
       `BMI ${bmi} (sottopeso) · BMR ${bmr} kcal · TDEE ${tdee} kcal. Il BMI descrive il rapporto peso/altezza; il BMR le calorie a riposo; il TDEE quanto consumi davvero con la tua routine. Per aumentare massa, punta sopra il TDEE con un piano strutturato.`,
     bodyEN: (bmi, bmr, tdee) =>
       `BMI ${bmi} (underweight) · BMR ${bmr} kcal · TDEE ${tdee} kcal. BMI describes weight-to-height ratio; BMR is calories at rest; TDEE is what you actually burn with your routine. To build mass, aim above your TDEE with a structured plan.`,
-    ctaIT: 'PIANO PER AUMENTARE MASSA',
-    ctaEN: 'PLAN TO BUILD LEAN MASS',
-    ctaHref: '/metodo-personale',
+    ctaIT: 'PRENOTA UNA CONSULENZA GRATUITA',
+    ctaEN: 'BOOK A FREE CONSULTATION',
+    ctaHref: '/contatti',
   },
   normal: {
     headlineIT: 'Sei in equilibrio: ora scegli la direzione',
@@ -155,9 +155,9 @@ const personalizedMessages = {
       `BMI ${bmi} (normopeso) · BMR ${bmr} kcal · TDEE ${tdee} kcal. Hai una base solida: il BMI è in range salutare, il TDEE ti dice quanto mangiare per mantenere, definire o costruire muscolo in base al tuo obiettivo.`,
     bodyEN: (bmi, bmr, tdee) =>
       `BMI ${bmi} (normal weight) · BMR ${bmr} kcal · TDEE ${tdee} kcal. You have a solid base: healthy BMI, and TDEE tells you how much to eat to maintain, lean out, or build muscle depending on your goal.`,
-    ctaIT: 'SCOPRI I PERCORSI DISPONIBILI',
-    ctaEN: 'EXPLORE AVAILABLE PROGRAMMES',
-    ctaHref: '/servizi',
+    ctaIT: 'PRENOTA UNA CONSULENZA GRATUITA',
+    ctaEN: 'BOOK A FREE CONSULTATION',
+    ctaHref: '/contatti',
   },
   overweight: {
     headlineIT: 'Piccoli cambiamenti, risultati visibili',
@@ -177,8 +177,8 @@ const personalizedMessages = {
       `BMI ${bmi} · BMR ${bmr} kcal · TDEE ${tdee} kcal. Tre numeri diversi: il BMI è un indicatore generale, il BMR la base a riposo, il TDEE il fabbisogno reale con la tua attività. È da lì che partiamo per un percorso realistico.`,
     bodyEN: (bmi, bmr, tdee) =>
       `BMI ${bmi} · BMR ${bmr} kcal · TDEE ${tdee} kcal. Three different numbers: BMI is a general indicator, BMR is your resting baseline, TDEE is your real need with activity. That's where a realistic path starts.`,
-    ctaIT: 'PARLIAMO DEL TUO PERCORSO',
-    ctaEN: "LET'S TALK ABOUT YOUR PATH",
+    ctaIT: 'PRENOTA UNA CONSULENZA GRATUITA',
+    ctaEN: 'BOOK A FREE CONSULTATION',
     ctaHref: '/contatti',
   },
 };
@@ -455,16 +455,9 @@ export default function BMRCalculator() {
             <p className="text-sm text-[#999] leading-relaxed mb-6">
               {t(msg.bodyIT(result.bmi, result.bmr, tdee), msg.bodyEN(result.bmi, result.bmr, tdee))}
             </p>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <MagneticButton href={msg.ctaHref}>
-                {t(msg.ctaIT, msg.ctaEN)}
-              </MagneticButton>
-              {msg.ctaHref !== '/contatti' && (
-                <MagneticButton href="/contatti" variant="outline">
-                  {t('PRENOTA UNA CONSULENZA', 'BOOK A CONSULTATION')}
-                </MagneticButton>
-              )}
-            </div>
+            <MagneticButton href="/contatti">
+              {t(msg.ctaIT, msg.ctaEN)}
+            </MagneticButton>
           </div>
         </div>
       )}

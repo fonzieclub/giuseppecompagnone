@@ -58,17 +58,39 @@ export function MetricGuideCards() {
   );
 }
 
+const BMI_SCALE_MIN = 15;
+const BMI_SCALE_MAX = 40;
+
+const BMI_SEGMENTS = [
+  { min: 15, max: 18.5, color: 'bg-blue-500/50', marker: '#3b82f6' },
+  { min: 18.5, max: 25, color: 'bg-green-500/50', marker: '#22c55e' },
+  { min: 25, max: 30, color: 'bg-yellow-500/50', marker: '#eab308' },
+  { min: 30, max: 40, color: 'bg-red-500/50', marker: '#ef4444' },
+];
+
+function bmiToPositionPercent(bmi) {
+  const span = BMI_SCALE_MAX - BMI_SCALE_MIN;
+  return Math.min(Math.max(((bmi - BMI_SCALE_MIN) / span) * 100, 1), 99);
+}
+
+function bmiSegmentIndex(bmi) {
+  const idx = BMI_SEGMENTS.findIndex(s => bmi < s.max);
+  return idx === -1 ? BMI_SEGMENTS.length - 1 : idx;
+}
+
 export function BmiScale({ bmi, categoryLabelIT, categoryLabelEN }) {
   const { t } = useLang();
+  const span = BMI_SCALE_MAX - BMI_SCALE_MIN;
+  const position = bmiToPositionPercent(bmi);
+  const activeSegment = BMI_SEGMENTS[bmiSegmentIndex(bmi)];
 
-  const ranges = [
-    { max: 18.5, color: 'bg-blue-500/40' },
-    { max: 25, color: 'bg-green-500/40' },
-    { max: 30, color: 'bg-yellow-500/40' },
-    { max: 40, color: 'bg-red-500/40' },
+  const tickLabels = [
+    { value: 15, pct: 0 },
+    { value: 18.5, pct: ((18.5 - BMI_SCALE_MIN) / span) * 100 },
+    { value: 25, pct: ((25 - BMI_SCALE_MIN) / span) * 100 },
+    { value: 30, pct: ((30 - BMI_SCALE_MIN) / span) * 100 },
+    { value: 40, pct: 100 },
   ];
-
-  const position = Math.min(Math.max((bmi / 40) * 100, 2), 98);
 
   return (
     <div className={cardClass}>
@@ -82,22 +104,37 @@ export function BmiScale({ bmi, categoryLabelIT, categoryLabelEN }) {
         )}
       </p>
       <div className="relative h-3 rounded-full overflow-hidden flex mb-3">
-        {ranges.map((r, i) => (
-          <div key={i} className={`flex-1 ${r.color}`} />
+        {BMI_SEGMENTS.map((seg) => (
+          <div
+            key={seg.max}
+            className={`h-full ${seg.color}`}
+            style={{ width: `${((seg.max - seg.min) / span) * 100}%` }}
+          />
         ))}
         <div
-          className="absolute top-1/2 w-3 h-3 rounded-full bg-white border-2 border-[#2F78F5] shadow-lg"
-          style={{ left: `${position}%`, transform: 'translate(-50%, -50%)' }}
+          className="absolute top-1/2 w-3.5 h-3.5 rounded-full bg-white shadow-lg z-10"
+          style={{
+            left: `${position}%`,
+            transform: 'translate(-50%, -50%)',
+            border: `2px solid ${activeSegment.marker}`,
+          }}
         />
       </div>
-      <div className="flex justify-between text-[9px] text-[#666] uppercase tracking-wider font-display">
-        <span>16</span>
-        <span>18.5</span>
-        <span>25</span>
-        <span>30</span>
-        <span>40+</span>
+      <div className="relative h-4 mb-1">
+        {tickLabels.map((tick) => (
+          <span
+            key={tick.value}
+            className="absolute text-[9px] text-[#666] uppercase tracking-wider font-display -translate-x-1/2"
+            style={{ left: `${tick.pct}%` }}
+          >
+            {tick.value === 40 ? '40+' : tick.value}
+          </span>
+        ))}
       </div>
-      <p className="text-xs text-[#2F78F5] mt-3 font-display uppercase tracking-wider">
+      <p
+        className="text-xs mt-3 font-display uppercase tracking-wider"
+        style={{ color: activeSegment.marker }}
+      >
         {t(`La tua fascia: ${categoryLabelIT}`, `Your range: ${categoryLabelEN}`)}
       </p>
     </div>

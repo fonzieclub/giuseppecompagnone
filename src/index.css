@@ -213,35 +213,67 @@ html {
 .gallery-marquee-container {
   width: 100%;
   overflow: hidden;
+  -webkit-overflow-scrolling: touch;
 }
 
 .gallery-marquee-content {
   display: flex;
-  gap: 16px;
-  width: fit-content;
-  animation: scroll-left 50s linear infinite;
+  gap: 12px;
+  width: max-content;
+  animation: gallery-scroll var(--marquee-duration, 24s) linear infinite;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+@keyframes gallery-scroll {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-33.333%, 0, 0);
+  }
 }
 
 .gallery-marquee-img {
   flex-shrink: 0;
-  height: 220px;
-  width: auto;
-  max-width: none;
+  width: 148px;
+  height: 200px;
   object-fit: cover;
   border-radius: 12px;
   pointer-events: none;
   user-select: none;
+  -webkit-user-drag: none;
 }
 
 @media (min-width: 768px) {
+  .gallery-marquee-content {
+    gap: 16px;
+  }
+
   .gallery-marquee-img {
+    width: 220px;
     height: 280px;
   }
 }
 
 @media (min-width: 1024px) {
   .gallery-marquee-img {
+    width: 260px;
     height: 320px;
+  }
+}
+
+@media (max-width: 767px) {
+  .gallery-marquee-container {
+    margin-left: -1.5rem;
+    margin-right: -1.5rem;
+    width: calc(100% + 3rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gallery-marquee-content {
+    animation-duration: 60s !important;
   }
 }
 

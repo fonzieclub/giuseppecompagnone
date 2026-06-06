@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { NavLink, Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Star, Images, LogOut, ExternalLink, Menu, X } from 'lucide-react';
+import { LayoutDashboard, Star, Images, Mail, LogOut, ExternalLink, Menu, X } from 'lucide-react';
 import { useAuth } from '@/lib/AuthContext';
 
 const navClass = ({ isActive }) =>
@@ -21,6 +21,9 @@ function NavItems({ onNavigate }) {
       <NavLink to="/admin/gallery" className={navClass} {...linkProps}>
         <Images size={18} /> Galleria
       </NavLink>
+      <NavLink to="/admin/contacts" className={navClass} {...linkProps}>
+        <Mail size={18} /> Contatti
+      </NavLink>
     </>
   );
 }
@@ -39,7 +42,11 @@ export default function AdminLayout() {
     navigate('/');
   };
 
-  const pageTitle = location.pathname.includes('/gallery') ? 'Galleria' : 'Recensioni';
+  const pageTitle = location.pathname.includes('/gallery')
+    ? 'Galleria'
+    : location.pathname.includes('/contacts')
+      ? 'Contatti'
+      : 'Recensioni';
 
   return (
     <div className="min-h-screen bg-[#050505] text-[#F2F2F2] flex flex-col md:flex-row">
@@ -162,6 +169,17 @@ export default function AdminLayout() {
         >
           <Images size={20} />
           Galleria
+        </NavLink>
+        <NavLink
+          to="/admin/contacts"
+          className={({ isActive }) =>
+            `flex-1 flex flex-col items-center justify-center gap-1 py-3 min-h-[56px] text-[10px] font-display uppercase tracking-wider ${
+              isActive ? 'text-[#2F78F5]' : 'text-[#666]'
+            }`
+          }
+        >
+          <Mail size={20} />
+          Contatti
         </NavLink>
         <Link
           to="/"

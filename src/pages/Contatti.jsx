@@ -33,16 +33,18 @@ export default function Contatti() {
       return;
     }
 
-    supabase.functions.invoke('send-contact-email', {
+    const { data: emailData, error: emailError } = await supabase.functions.invoke('send-contact-email', {
       body: {
         name: form.nome,
         email: form.email,
         goal: form.obiettivo,
         message: form.messaggio,
       },
-    }).catch(() => {
-      // Email notification is optional; form data is already saved
     });
+
+    if (emailError || emailData?.success === false) {
+      console.warn('Contact email notification failed:', emailError || emailData?.error);
+    }
 
     setSent(true);
     setSending(false);

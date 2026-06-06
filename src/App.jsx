@@ -21,6 +21,7 @@ import Login from './pages/Login';
 import AuthCallback from './pages/AuthCallback';
 import AdminReviews from './pages/admin/AdminReviews';
 import AdminGallery from './pages/admin/AdminGallery';
+import AdminContacts from './pages/admin/AdminContacts';
 
 const AppRoutes = () => (
     <Routes>
@@ -31,6 +32,7 @@ const AppRoutes = () => (
         <Route index element={<Navigate to="/admin/reviews" replace />} />
         <Route path="reviews" element={<AdminReviews />} />
         <Route path="gallery" element={<AdminGallery />} />
+        <Route path="contacts" element={<AdminContacts />} />
       </Route>
 
       <Route element={<Layout />}>

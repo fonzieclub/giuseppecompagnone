@@ -28,7 +28,11 @@ export default function Contatti() {
 
     if (error) {
       console.error('Contact form error:', error);
-      toast.error(t('Errore durante l\'invio. Riprova.', 'Error sending message. Please try again.'));
+      toast.error(
+        error.code === '42501'
+          ? t('Configurazione database incompleta. Contatta l\'amministratore.', 'Database setup incomplete. Contact the administrator.')
+          : t('Errore durante l\'invio. Riprova.', 'Error sending message. Please try again.')
+      );
       setSending(false);
       return;
     }

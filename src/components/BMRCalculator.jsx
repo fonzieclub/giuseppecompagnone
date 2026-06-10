@@ -232,7 +232,7 @@ export default function BMRCalculator() {
   const msg = bmiCategory ? personalizedMessages[bmiCategory] : null;
   const calorieTargets = result && tdee && bmiCategory ? getCalorieTargets(tdee, bmiCategory) : null;
 
-  const inputClass = "w-full bg-white/5 border border-white/10 rounded-full px-6 py-4 text-[#F2F2F2] text-sm font-body placeholder:text-[#555] focus:border-[#2F78F5] focus:ring-1 focus:ring-[#2F78F5] focus:outline-none transition-all min-h-[48px]";
+  const inputClass = "w-full bg-white/5 border border-white/10 rounded-full px-6 py-4 text-[#F2F2F2] text-base md:text-sm font-body placeholder:text-[#555] focus:border-[#2F78F5] focus:ring-1 focus:ring-[#2F78F5] focus:outline-none transition-all min-h-[48px]";
 
   return (
     <div className="max-w-2xl mx-auto">

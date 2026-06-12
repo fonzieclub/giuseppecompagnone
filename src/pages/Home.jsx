@@ -45,8 +45,9 @@ export default function Home() {
             </span>
           </div>
           <AnimatedHeadline
+            immediate
             text={t('LA TUA NUOVA VERSIONE TI ASPETTA', 'YOUR NEW YOU AWAITS')}
-            className="text-3xl md:text-5xl lg:text-6xl font-display font-bold uppercase leading-[0.95] mb-6 !justify-start !text-left"
+            className="text-3xl md:text-5xl lg:text-6xl font-display font-bold uppercase leading-[0.95] mb-6 text-left"
           />
           <p className="text-sm md:text-base text-[#999] leading-relaxed mb-8 max-w-md">
             {t(

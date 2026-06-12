@@ -16,7 +16,7 @@ export default function Layout() {
   }, [pathname]);
 
   return (
-    <div className="min-h-screen bg-[#050505] text-[#F2F2F2]">
+    <div className="min-h-screen bg-[#050505] text-[#F2F2F2] overflow-x-clip w-full">
       <FilmGrain />
       <Navbar />
       <main className="pt-20">

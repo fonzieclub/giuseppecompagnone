@@ -6,7 +6,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 
-const cardClass = 'bg-white/[0.02] border border-white/5 rounded-2xl p-5 md:p-6';
+const cardClass = 'bg-white/[0.02] border border-white/5 rounded-2xl p-4 sm:p-5 md:p-6 min-w-0';
 
 export function MetricGuideCards() {
   const { t } = useLang();
@@ -120,7 +120,7 @@ export function BmiScale({ bmi, categoryLabelIT, categoryLabelEN }) {
           }}
         />
       </div>
-      <div className="relative h-4 mb-1">
+      <div className="relative h-4 mb-1 overflow-hidden">
         {tickLabels.map((tick) => (
           <span
             key={tick.value}

@@ -187,7 +187,7 @@ export default function Recensioni() {
                   value={text}
                   onChange={e => setText(e.target.value)}
                   placeholder={t('Condividi la tua esperienza...', 'Share your experience...')}
-                  className="review-form-input w-full bg-white/5 border border-white/10 rounded-xl px-6 py-4 text-[#F2F2F2] placeholder:text-[#555] focus:border-[#2F78F5] focus:outline-none min-h-[120px] resize-none"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 sm:px-6 py-4 text-[#F2F2F2] text-base md:text-sm placeholder:text-[#555] focus:border-[#2F78F5] focus:outline-none min-h-[120px] resize-none"
                   rows="5"
                 />
               </div>

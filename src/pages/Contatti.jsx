@@ -54,7 +54,7 @@ export default function Contatti() {
     setSending(false);
   };
 
-  const inputClass = "w-full bg-white/5 border border-white/10 rounded-full px-6 py-4 text-[#F2F2F2] text-sm font-body placeholder:text-[#555] focus:border-[#2F78F5] focus:ring-1 focus:ring-[#2F78F5] focus:outline-none transition-all min-h-[48px]";
+  const inputClass = "w-full bg-white/5 border border-white/10 rounded-full px-4 sm:px-6 py-4 text-[#F2F2F2] text-base md:text-sm font-body placeholder:text-[#555] focus:border-[#2F78F5] focus:ring-1 focus:ring-[#2F78F5] focus:outline-none transition-all min-h-[48px]";
 
   return (
     <section className="min-h-screen bg-[#050505] py-24 md:py-32">
@@ -132,7 +132,7 @@ export default function Contatti() {
                     value={form.messaggio}
                     onChange={e => handleChange('messaggio', e.target.value)}
                     placeholder={t('Raccontami di te e dei tuoi obiettivi...', 'Tell me about yourself and your goals...')}
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-[#F2F2F2] text-sm font-body placeholder:text-[#555] focus:border-[#2F78F5] focus:ring-1 focus:ring-[#2F78F5] focus:outline-none min-h-[140px] resize-none transition-all"
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 sm:px-6 py-4 text-[#F2F2F2] text-base md:text-sm font-body placeholder:text-[#555] focus:border-[#2F78F5] focus:ring-1 focus:ring-[#2F78F5] focus:outline-none min-h-[140px] resize-none transition-all"
                     required
                   />
                 </div>

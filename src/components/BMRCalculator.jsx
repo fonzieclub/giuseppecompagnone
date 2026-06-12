@@ -232,10 +232,10 @@ export default function BMRCalculator() {
   const msg = bmiCategory ? personalizedMessages[bmiCategory] : null;
   const calorieTargets = result && tdee && bmiCategory ? getCalorieTargets(tdee, bmiCategory) : null;
 
-  const inputClass = "w-full bg-white/5 border border-white/10 rounded-full px-6 py-4 text-[#F2F2F2] text-base md:text-sm font-body placeholder:text-[#555] focus:border-[#2F78F5] focus:ring-1 focus:ring-[#2F78F5] focus:outline-none transition-all min-h-[48px]";
+  const inputClass = "w-full max-w-full bg-white/5 border border-white/10 rounded-full px-4 sm:px-6 py-4 text-[#F2F2F2] text-base md:text-sm font-body placeholder:text-[#555] focus:border-[#2F78F5] focus:ring-1 focus:ring-[#2F78F5] focus:outline-none transition-all min-h-[48px]";
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="w-full max-w-2xl mx-auto min-w-0">
 
       <p className="text-sm text-[#888] text-center mb-3">
         {t('Calcola BMR, TDEE e BMI in un solo passaggio', 'Calculate your BMR, TDEE and BMI in one step')}
@@ -249,19 +249,19 @@ export default function BMRCalculator() {
 
       <MetricGuideCards />
 
-      <div className="flex justify-center mb-8">
-        <div className="bg-white/5 rounded-full p-1 border border-white/10 flex">
+      <div className="flex justify-center mb-8 w-full">
+        <div className="bg-white/5 rounded-full p-1 border border-white/10 flex w-full max-w-md">
           <button
             type="button"
             onClick={() => setUnit('metric')}
-            className={`px-6 py-2 rounded-full text-xs font-display uppercase tracking-wider transition-all min-h-[40px] ${unit === 'metric' ? 'bg-[#2F78F5] text-white' : 'text-[#888]'}`}
+            className={`flex-1 px-3 sm:px-6 py-2 rounded-full text-[10px] sm:text-xs font-display uppercase tracking-wider transition-all min-h-[40px] ${unit === 'metric' ? 'bg-[#2F78F5] text-white' : 'text-[#888]'}`}
           >
             {t('METRICO (kg/cm)', 'METRIC (kg/cm)')}
           </button>
           <button
             type="button"
             onClick={() => setUnit('us')}
-            className={`px-6 py-2 rounded-full text-xs font-display uppercase tracking-wider transition-all min-h-[40px] ${unit === 'us' ? 'bg-[#2F78F5] text-white' : 'text-[#888]'}`}
+            className={`flex-1 px-3 sm:px-6 py-2 rounded-full text-[10px] sm:text-xs font-display uppercase tracking-wider transition-all min-h-[40px] ${unit === 'us' ? 'bg-[#2F78F5] text-white' : 'text-[#888]'}`}
           >
             US (lbs/ft-in)
           </button>
@@ -374,8 +374,8 @@ export default function BMRCalculator() {
             )}
           </p>
 
-          <div className="space-y-3">
-            <div className="relative h-1 bg-white/10 rounded-full overflow-visible">
+          <div className="space-y-3 overflow-hidden">
+            <div className="relative h-1 bg-white/10 rounded-full overflow-hidden">
               <div className="absolute top-0 left-0 h-full bg-gradient-to-r from-[#2F78F5]/30 to-[#2F78F5] rounded-full transition-all duration-1000 ease-out" style={{ width: `${gaugePosition}%` }} />
               <div className="absolute top-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-[#2F78F5] shadow-[0_0_12px_rgba(47,120,245,0.6)] transition-all duration-1000 ease-out" style={{ left: `${gaugePosition}%`, transform: 'translate(-50%, -50%)' }} />
             </div>

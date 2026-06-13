@@ -87,8 +87,21 @@ export default function Footer() {
               <span className={`px-3 py-1 text-[11px] font-display rounded-full transition-all duration-300 ${lang === 'en' ? 'bg-[#2F78F5] text-white' : 'text-[#888]'}`}>EN</span>
             </button>
           </div>
-          <p className="text-xs text-[#666]">© {new Date().getFullYear()} Giuseppe Compagnone. {t('Tutti i diritti riservati.', 'All rights reserved.')}</p>
-          <p className="text-xs text-[#666]">{t('Personal Trainer Certificato — Campania, Italia', 'Certified Personal Trainer — Campania, Italy')}</p>
+          <p className="text-xs text-[#666] text-center">
+            © {new Date().getFullYear()} Giuseppe Compagnone. {t('Tutti i diritti riservati.', 'All rights reserved.')}
+          </p>
+          <p className="text-xs text-[#666] text-center">
+            {lang === 'it' ? (
+              <>Sito realizzato da{' '}
+                <a href="https://saywell.it" target="_blank" rel="noopener noreferrer" className="text-[#888] hover:text-[#2F78F5] transition-colors">saywell</a>
+              </>
+            ) : (
+              <>Made by{' '}
+                <a href="https://saywell.it" target="_blank" rel="noopener noreferrer" className="text-[#888] hover:text-[#2F78F5] transition-colors">saywell</a>
+              </>
+            )}
+          </p>
+          <p className="text-xs text-[#666] text-center">{t('Personal Trainer Certificato — Campania, Italia', 'Certified Personal Trainer — Campania, Italy')}</p>
         </div>
       </div>
     </footer>

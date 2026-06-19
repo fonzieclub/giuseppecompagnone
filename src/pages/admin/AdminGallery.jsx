@@ -202,7 +202,7 @@ export default function AdminGallery() {
               <label className="flex items-center gap-2 px-4 py-3 rounded-xl border border-dashed border-white/20 text-sm text-[#888] hover:border-[#2F78F5] hover:text-[#2F78F5] cursor-pointer transition-all min-h-[48px] w-full sm:w-auto">
                 <Upload size={16} />
                 {uploading ? 'Caricamento...' : 'Carica foto'}
-                <input type="file" accept="image/*" capture="environment" className="hidden" onChange={handleImageChange} disabled={uploading} />
+                <input type="file" accept="image/*" className="hidden" onChange={handleImageChange} disabled={uploading} />
               </label>
             </div>
           </div>

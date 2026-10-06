@@ -43,17 +43,20 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [session, setSession] = useState(null);
   const [isLoadingAuth, setIsLoadingAuth] = useState(true);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(false);
   const profileLoadRef = useRef(0);
 
   const loadUser = useCallback(async (authSession) => {
     if (!authSession?.user) {
       setSession(null);
       setUser(null);
+      setIsLoadingProfile(false);
       return;
     }
 
     setSession(authSession);
     setUser(mapProfileToUser(authSession.user, null));
+    setIsLoadingProfile(true);
 
     const loadId = ++profileLoadRef.current;
 
@@ -80,6 +83,10 @@ export const AuthProvider = ({ children }) => {
     } catch (err) {
       if (loadId !== profileLoadRef.current) return;
       console.warn('Profile load skipped:', err.message);
+    } finally {
+      if (loadId === profileLoadRef.current) {
+        setIsLoadingProfile(false);
+      }
     }
   }, []);
 
@@ -96,20 +103,21 @@ export const AuthProvider = ({ children }) => {
       try {
         const { data: { session: initialSession }, error } = await withTimeout(
           supabase.auth.getSession(),
-          5000,
+          8000,
           'Auth session'
         );
 
         if (error) throw error;
 
         if (mounted && initialSession) {
-          void loadUser(initialSession);
+          await loadUser(initialSession);
         }
       } catch (err) {
         console.warn('Auth init failed, continuing as guest:', err.message);
         if (mounted) {
           setSession(null);
           setUser(null);
+          setIsLoadingProfile(false);
         }
       } finally {
         finishLoading();
@@ -178,6 +186,7 @@ export const AuthProvider = ({ children }) => {
     if (error) throw error;
     setUser(null);
     setSession(null);
+    setIsLoadingProfile(false);
   };
 
   const isAuthenticated = !!session?.user;
@@ -190,6 +199,7 @@ export const AuthProvider = ({ children }) => {
       isAuthenticated,
       isAdmin,
       isLoadingAuth,
+      isLoadingProfile,
       signUp,
       signIn,
       signInWithGoogle,

@@ -9,10 +9,11 @@ const DefaultFallback = () => (
 );
 
 export default function AdminRoute({ children, fallback = <DefaultFallback /> }) {
-  const { isAuthenticated, isAdmin, isLoadingAuth } = useAuth();
+  const { isAuthenticated, isAdmin, isLoadingAuth, isLoadingProfile } = useAuth();
   const location = useLocation();
 
-  if (isLoadingAuth && !isAuthenticated) {
+  // Wait for session restore and profile role before deciding access
+  if (isLoadingAuth || (isAuthenticated && isLoadingProfile)) {
     return fallback;
   }
 

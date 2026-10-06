@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 
-const TIMEOUT_MS = 12000;
+const TIMEOUT_MS = 15000;
 
 export default function AuthCallback() {
   const navigate = useNavigate();
@@ -31,19 +31,67 @@ export default function AuthCallback() {
       fail('Accesso non completato. Riprova dal login.');
     }, TIMEOUT_MS);
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (session && (event === 'SIGNED_IN' || event === 'INITIAL_SESSION')) {
+    const complete = (session) => {
+      if (!session || done) return;
+      clearTimeout(timeout);
+      finish(redirect);
+    };
+
+    const run = async () => {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const code = params.get('code');
+        const authError = params.get('error_description') || params.get('error');
+
+        if (authError) {
+          clearTimeout(timeout);
+          fail(authError);
+          return;
+        }
+
+        // Wait for the client PKCE auto-exchange (detectSessionInUrl)
+        for (let i = 0; i < 16 && !done; i++) {
+          const { data: { session } } = await supabase.auth.getSession();
+          if (session) {
+            complete(session);
+            return;
+          }
+          await new Promise((r) => setTimeout(r, 250));
+        }
+
+        if (done) return;
+
+        // Fallback: exchange the code explicitly if still no session
+        if (code) {
+          const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+          if (exchangeError) {
+            const { data: { session: retrySession } } = await supabase.auth.getSession();
+            if (retrySession) {
+              complete(retrySession);
+              return;
+            }
+            throw exchangeError;
+          }
+          complete(data.session);
+          return;
+        }
+
         clearTimeout(timeout);
-        finish(redirect);
+        fail('Accesso non completato. Riprova dal login.');
+      } catch (err) {
+        console.error('Auth callback error:', err);
+        clearTimeout(timeout);
+        fail(err.message || 'Errore durante l\'accesso');
+      }
+    };
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session && (event === 'SIGNED_IN' || event === 'INITIAL_SESSION' || event === 'TOKEN_REFRESHED')) {
+        complete(session);
       }
     });
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        clearTimeout(timeout);
-        finish(redirect);
-      }
-    });
+    void run();
 
     return () => {
       done = true;

@@ -13,7 +13,7 @@ function getInitialMode(searchParams, redirect) {
 
 export default function Login() {
   const { t } = useLang();
-  const { signIn, signUp, signInWithGoogle, isAuthenticated } = useAuth();
+  const { signIn, signUp, signInWithGoogle, isAuthenticated, isLoadingProfile } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const redirect = searchParams.get('redirect') || '/recensioni';
@@ -26,10 +26,11 @@ export default function Login() {
   const [awaitingConfirmation, setAwaitingConfirmation] = useState(false);
 
   useEffect(() => {
-    if (isAuthenticated) {
+    // Wait for profile/role so admin redirects don't hit a false "access denied"
+    if (isAuthenticated && !isLoadingProfile) {
       navigate(redirect, { replace: true });
     }
-  }, [isAuthenticated, navigate, redirect]);
+  }, [isAuthenticated, isLoadingProfile, navigate, redirect]);
 
   const inputClass =
     'w-full bg-white/5 border border-white/10 rounded-full px-6 py-4 text-[#F2F2F2] text-base sm:text-sm font-body placeholder:text-[#555] focus:border-[#2F78F5] focus:ring-1 focus:ring-[#2F78F5] focus:outline-none transition-all min-h-[48px]';
